@@ -70,7 +70,73 @@ struct node{
 	struct node *left;
 	struct node *right;
 };
+struct node_dll *list_ptr; 
+int inorder_check(struct node *root)
+{
 
+	if (root == NULL || list_ptr == NULL)
+	{
+		if (list_ptr == NULL){}
+			//printf("List pointer NULL\n");
+		return -10;
+	}
+	else
+	{
+		//printf("Root data is %d\n", root->data);
+		if (inorder_check(root->left) == -1)
+			return 0;
+		if (root->data == list_ptr->data)
+		{
+			//printf("tree: %d, list:%d\n", root->data, list_ptr->data);
+			list_ptr = list_ptr->next;
+		}
+		else
+		{
+			//printf("tree: %d, list:%d\n", root->data, list_ptr->data);
+			return 0;
+		}
+		if (inorder_check(root->right) == -1)
+			return 0;
+	}
+	return 1;
+}
+void inorder(struct node *root, int *arr){
+
+	static int  k = 0;
+	if (root == NULL || arr == NULL)
+		return;
+	else
+	{
+		inorder(root->left, arr);
+		arr[k] = root->data;
+		k++;
+		inorder(root->right, arr);
+	}
+}
+int calc_bst_length(struct node *root)
+{
+	if (root == NULL)
+		return 0;
+	else
+		return 1 + calc_bst_length(root->left) + calc_bst_length(root->right);
+}
 int is_identical(struct node_dll *head, struct node *root){
-	return -1;
+	if (head == NULL || root == NULL)
+		return -1;
+	int bst_length = 0, dll_length = 0;
+	struct node_dll *temp = head;
+	while (temp != NULL)
+	{
+		dll_length++;
+		temp = temp->next;
+	}
+	bst_length = calc_bst_length(root);
+//	printf("bst_length:%d, dll_length:%d\n", bst_length, dll_length);
+	if (bst_length != dll_length)
+		return 0;
+	list_ptr = head;
+	int result = inorder_check(root);
+	if (result == -10)
+		return 0;
+	return result;
 }

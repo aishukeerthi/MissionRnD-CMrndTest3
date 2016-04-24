@@ -58,22 +58,62 @@ struct enode{
 	struct enode *right;
 };
 
-/*
-Helper Functions are optional to write 
-*/
-//Helper Functions Start
+
 int isOperator(char *data){
-	return 0;
+	if (data[0] == '*' || data[0] == '+' || data[0] == '-')
+		return 1;
+	else
+		return 0;
 }
+
 int isOperand(char *data){
+	if (!isOperator(data))
+	{
+		return 1;
+	}
 	return 0;
 }
 int getOperand(char *data){
-	//converts data string to an integer "123" => 123
-	return 0;
-}
-//Helper Functions end
-int solve_tree(struct enode *root){
-    return -1;
+	if (isOperand(data))
+	{
+		char *temp = data;
+		return strtol(temp, &temp, 10);
+	}
+	else
+		return 0;
 }
 
+int apply_operator(char op, int a, int b)
+{
+	switch (op)
+	{
+	case '+':
+		return (a + b);
+	case '-':
+		return (a - b);
+	case '*':
+		return (a*b);
+	default:
+		exit(1);
+	}
+	return -1;
+}
+
+//Helper Functions end
+int solve_tree(struct enode *root){
+	int result;
+	if (root == NULL)
+		return -1;
+
+	if (isOperand(root->data))
+		return getOperand(root->data);
+	else if (isOperator(root->data))
+	{
+		char operator1 = root->data[0];
+		int left_result = solve_tree(root->left);
+		int right_result = solve_tree(root->right);
+		return  apply_operator(operator1, left_result, right_result);
+	}
+	else
+		return -1;
+}
